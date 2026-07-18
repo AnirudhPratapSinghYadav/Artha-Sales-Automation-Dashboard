@@ -24,10 +24,10 @@ export function LeadsOverviewChart({ data, period, currentCount, percentageChang
   return (
     <Card className="h-full">
       <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-900">Leads Overview</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-zinc-100">Leads Overview</h3>
         <div className="flex items-baseline gap-3 mt-1">
-          <span className="text-2xl font-bold text-gray-900">{currentCount}</span>
-          <span className="text-sm text-gray-500">leads {period.replace('_', ' ')}</span>
+          <span className="text-2xl font-bold text-gray-900 dark:text-zinc-100">{currentCount}</span>
+          <span className="text-sm text-gray-500 dark:text-zinc-400">leads {period.replace('_', ' ')}</span>
           <span className={`text-sm font-medium ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
             {isPositive ? '↑' : '↓'} {Math.abs(percentageChange).toFixed(1)}% since last {period.split('_')[1] || 'period'}
           </span>
