@@ -12,8 +12,11 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: 'Artha Sales Automation',
-  description: 'Internal Sales CRM for Artha',
+  title: {
+    template: '%s | Artha Sales Automation',
+    default: 'Artha Sales Automation',
+  },
+  description: 'AI-driven Sales CRM and Automation Platform for Artha',
 };
 
 export default function RootLayout({
