@@ -104,22 +104,24 @@ export default function AppointmentsPage() {
           </div>
         </div>
 
-        <div className="flex items-center bg-gray-100 dark:bg-zinc-800/50 p-1 rounded-lg border border-gray-200 dark:border-zinc-800">
+        <div className="flex items-center bg-gray-100 dark:bg-zinc-800/50 p-1 rounded-lg border border-gray-200 dark:border-zinc-800" role="group" aria-label="Calendar View">
           <button
             onClick={() => setViewMode('week')}
             className={clsx(
-              "px-4 py-1.5 text-sm font-medium rounded-md transition-colors",
+              "px-4 py-1.5 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500",
               viewMode === 'week' ? "bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 shadow-sm" : "text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300"
             )}
+            aria-pressed={viewMode === 'week'}
           >
             Week
           </button>
           <button
             onClick={() => setViewMode('month')}
             className={clsx(
-              "px-4 py-1.5 text-sm font-medium rounded-md transition-colors",
+              "px-4 py-1.5 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500",
               viewMode === 'month' ? "bg-white dark:bg-zinc-700 text-gray-900 dark:text-zinc-100 shadow-sm" : "text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300"
             )}
+            aria-pressed={viewMode === 'month'}
           >
             Month
           </button>
