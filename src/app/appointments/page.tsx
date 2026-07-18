@@ -6,9 +6,10 @@ import { getAppointments } from '@/lib/data';
 import { CalendarGrid } from '@/components/appointments/CalendarGrid';
 import { AppointmentDetail } from '@/components/appointments/AppointmentDetail';
 import { format, addMonths, subMonths, addWeeks, subWeeks, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import clsx from 'clsx';
 import { useToast } from '@/components/ui/ToastProvider';
+import { BookMeetingModal } from '@/components/appointments/BookMeetingModal';
 
 export default function AppointmentsPage() {
   const { toast } = useToast();
@@ -17,6 +18,7 @@ export default function AppointmentsPage() {
   const [viewMode, setViewMode] = useState<'week' | 'month'>('week');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isBookModalOpen, setIsBookModalOpen] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -58,9 +60,20 @@ export default function AppointmentsPage() {
   return (
     <div className="max-w-7xl mx-auto pb-10">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-zinc-100">Appointments</h2>
-          <p className="text-sm text-gray-500 dark:text-zinc-400 mt-1">Manage scheduled meetings and AI bookings</p>
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-zinc-100">Appointments</h2>
+            <div className="flex items-center gap-3 mt-1">
+              <p className="text-sm text-gray-500 dark:text-zinc-400">Manage scheduled meetings and AI bookings</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsBookModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          >
+            <Plus className="w-4 h-4" />
+            Book Meeting
+          </button>
         </div>
 
         {/* Color Legend */}
@@ -157,6 +170,11 @@ export default function AppointmentsPage() {
       <AppointmentDetail 
         appointment={selectedAppointment} 
         onClose={() => setSelectedAppointment(null)} 
+      />
+
+      <BookMeetingModal 
+        isOpen={isBookModalOpen} 
+        onClose={() => setIsBookModalOpen(false)} 
       />
     </div>
   );
