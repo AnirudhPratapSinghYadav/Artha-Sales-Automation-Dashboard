@@ -96,7 +96,8 @@ export default function DashboardPage() {
           <select 
             value={period}
             onChange={(e) => setPeriod(e.target.value)}
-            className="bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block px-3 py-2"
+            className="bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block px-3 py-2 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 cursor-pointer"
+            aria-label="Select time period"
           >
             <option value="today">Today</option>
             <option value="this_week">This Week</option>
