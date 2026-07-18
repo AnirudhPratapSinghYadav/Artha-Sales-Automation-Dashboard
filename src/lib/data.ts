@@ -37,52 +37,93 @@ import {
   mockSystemStatus,
   mockRolePermissions,
 } from './mock-data';
+import { supabase } from './supabase';
 
 // ---------------------------------------------------------------------------
 // Helper: simulate async fetch
 // ---------------------------------------------------------------------------
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+function mapSupabaseLeadToUI(row: any): Lead {
+  return {
+    ...row,
+    signals: {
+      intent_score: row.intent_score || 0,
+      fit_score: row.fit_score || 0,
+      momentum_score: row.momentum_score || 0,
+      buying_readiness: row.buying_readiness_score || 0,
+      overall_score: row.lead_score_total || 0,
+      tier: row.lead_score_band || getLeadTier(row.lead_score_total || 0),
+      detected_signals: row.signals && Array.isArray(row.signals) ? row.signals : []
+    }
+  } as Lead;
+}
+
+function parseHistoryToMessages(history: string, last_updated: string): Message[] {
+  const lines = history.split('\n');
+  const messages: Message[] = [];
+  
+  lines.forEach((line, index) => {
+    line = line.trim();
+    if (!line) return;
+    
+    let sender: 'bot' | 'lead' = 'bot';
+    let content = line;
+    
+    if (line.toLowerCase().startsWith('prospect')) {
+      sender = 'lead';
+      content = line.replace(/^Prospect[^:]*:\s*/i, '');
+    } else if (line.toLowerCase().startsWith('maya') || line.toLowerCase().startsWith('bot')) {
+      sender = 'bot';
+      content = line.replace(/^(Maya|Bot)[^:]*:\s*/i, '');
+    }
+    
+    messages.push({
+      id: `msg_${index}`,
+      sender,
+      content,
+      timestamp: new Date(new Date(last_updated || new Date()).getTime() - (lines.length - index) * 60000).toISOString()
+    });
+  });
+  
+  return messages;
+}
+
 // ---------------------------------------------------------------------------
 // Leads
 // ---------------------------------------------------------------------------
 export async function getLeads(filters?: LeadFilters): Promise<Lead[]> {
-  // TODO: Replace with Supabase query
-  // const { data } = await supabase.from('leads').select('*')
-  await delay(100);
-  let leads = [...mockLeads];
+  let query = supabase.from('leads').select('*');
 
   if (filters?.search) {
-    const q = filters.search.toLowerCase();
-    leads = leads.filter(
-      l =>
-        l.first_name.toLowerCase().includes(q) ||
-        l.last_name.toLowerCase().includes(q) ||
-        l.company.toLowerCase().includes(q) ||
-        l.phone.includes(q) ||
-        l.email.toLowerCase().includes(q)
-    );
+    query = query.or(`first_name.ilike.%${filters.search}%,last_name.ilike.%${filters.search}%,company.ilike.%${filters.search}%,phone.ilike.%${filters.search}%,email.ilike.%${filters.search}%`);
   }
 
   if (filters?.stage && filters.stage !== 'ALL') {
-    leads = leads.filter(l => l.stage === filters.stage);
+    query = query.eq('stage', filters.stage);
   }
 
   if (filters?.tier && filters.tier !== 'ALL') {
-    leads = leads.filter(l => l.signals.tier === filters.tier);
+    query = query.eq('lead_score_band', filters.tier);
   }
 
   if (filters?.country) {
-    leads = leads.filter(l => l.country === filters.country);
+    query = query.eq('country', filters.country);
   }
 
-  return leads;
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching leads:', error);
+    return [];
+  }
+
+  return (data || []).map(mapSupabaseLeadToUI);
 }
 
 export async function getLead(id: string): Promise<Lead | null> {
-  // TODO: Replace with Supabase query
-  await delay(50);
-  return mockLeads.find(l => l.id === id) || null;
+  const { data, error } = await supabase.from('leads').select('*').eq('id', id).single();
+  if (error || !data) return null;
+  return mapSupabaseLeadToUI(data);
 }
 
 export function getLeadTier(overallScore: number): ScoreTier {
@@ -117,20 +158,22 @@ export function getTierDotColor(tier: ScoreTier): string {
 // Conversations
 // ---------------------------------------------------------------------------
 export async function getConversations(leadId?: string): Promise<Conversation[]> {
-  // TODO: Replace with Supabase query
-  await delay(100);
+  let query = supabase.from('conversations').select('*');
   if (leadId) {
-    return mockConversations.filter(c => c.lead_id === leadId);
+    query = query.eq('lead_id', leadId);
   }
-  return [...mockConversations];
+  const { data, error } = await query;
+  if (error) {
+    console.error('Error fetching conversations:', error);
+    return [];
+  }
+  return data as Conversation[];
 }
 
 export async function getMessages(conversationId: string): Promise<Message[]> {
-  // TODO: Replace with Supabase query + parse
-  await delay(50);
-  const conv = mockConversations.find(c => c.id === conversationId);
-  if (!conv) return [];
-  return parseConversationMessages(conv);
+  const { data, error } = await supabase.from('conversations').select('history, last_updated').eq('id', conversationId).single();
+  if (error || !data || !data.history) return [];
+  return parseHistoryToMessages(data.history, data.last_updated);
 }
 
 // ---------------------------------------------------------------------------
@@ -214,7 +257,6 @@ export async function getSystemStatus(): Promise<SystemStatus> {
 // ---------------------------------------------------------------------------
 // Supabase Realtime Subscriptions
 // ---------------------------------------------------------------------------
-import { supabase } from './supabase';
 
 export function subscribeToLeads(callback: (payload: any) => void) {
   return supabase

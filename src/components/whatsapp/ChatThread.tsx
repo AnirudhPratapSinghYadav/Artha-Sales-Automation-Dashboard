@@ -2,13 +2,11 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { Conversation, Lead, Message } from '@/lib/types';
-import { getMessages } from '@/lib/data';
+import { getMessages, subscribeToConversations } from '@/lib/data';
 import { MessageBubble } from './MessageBubble';
-import { toggleTakeover } from '@/lib/n8n';
 import { Phone, MoreVertical, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/ToastProvider';
-import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import clsx from 'clsx';
 import { format, parseISO } from 'date-fns';
 
@@ -20,9 +18,6 @@ interface ChatThreadProps {
 export function ChatThread({ conversation, lead }: ChatThreadProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const [takingOver, setTakingOver] = useState(false);
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmProps, setConfirmProps] = useState({ isHumanNow: false });
   const { toast } = useToast();
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -35,6 +30,16 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
       setLoading(false);
     }
     loadMsgs();
+
+    if (conversation) {
+      const channel = subscribeToConversations(conversation.lead_id, async () => {
+        const msgs = await getMessages(conversation.id);
+        setMessages(msgs);
+      });
+      return () => {
+        channel.unsubscribe();
+      };
+    }
   }, [conversation]);
 
   // Auto-scroll to bottom
@@ -54,39 +59,11 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
     );
   }
 
-  const handleTakeover = () => {
-    if (!lead || !conversation) return;
-    const isHumanNow = lead ? lead.handoff_required : false;
-    setConfirmProps({ isHumanNow });
-    setConfirmOpen(true);
-  };
-
-  const handleConfirmTakeover = async () => {
-    if (!lead || !conversation) return;
-    setConfirmOpen(false);
-    setTakingOver(true);
-    await toggleTakeover(lead.id, conversation.phone, !confirmProps.isHumanNow);
-    toast({
-      title: confirmProps.isHumanNow ? 'AI Resumed' : 'Manual Control',
-      message: confirmProps.isHumanNow ? 'AI Bot Resumed' : 'You are now in control',
-    });
-    setTakingOver(false);
-  };
-
   const leadName = lead ? `${lead.first_name} ${lead.last_name}` : conversation.phone;
   const isHumanTakeover = lead ? lead.handoff_required : false;
 
   return (
     <div className="flex-1 flex flex-col h-full bg-[#EFEAE2] dark:bg-zinc-900 relative">
-      <ConfirmDialog 
-        isOpen={confirmOpen}
-        title={confirmProps.isHumanNow ? 'Resume AI Bot' : 'Take Over Manually'}
-        message={confirmProps.isHumanNow ? 'Resume AI bot for this conversation?' : 'Pause AI bot and take over manually?'}
-        confirmLabel="Confirm"
-        onConfirm={handleConfirmTakeover}
-        onCancel={() => setConfirmOpen(false)}
-        variant={confirmProps.isHumanNow ? 'info' : 'warning'}
-      />
       {/* Background Pattern (WhatsApp style) */}
       <div 
         className="absolute inset-0 opacity-40 dark:opacity-10 pointer-events-none"
@@ -117,18 +94,11 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
           </Badge>
           
           <button 
-            onClick={handleTakeover}
-            disabled={takingOver}
-            className={clsx(
-              "px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border shadow-sm flex items-center gap-2",
-              isHumanTakeover 
-                ? "bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-700" 
-                : "bg-white dark:bg-zinc-800 border-orange-500 text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-orange-900/30"
-            )}
+            disabled={true}
+            className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border shadow-sm flex items-center gap-2 bg-gray-100 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed"
+            title="Takeover functionality is disabled until n8n webhook is configured"
           >
-            {takingOver ? 'Updating...' : isHumanTakeover ? 'Resume AI' : (
-              <><ShieldAlert className="w-4 h-4" /> Take Over</>
-            )}
+            <ShieldAlert className="w-4 h-4" /> Take Over (Disabled)
           </button>
           
           <div className="w-px h-6 bg-gray-200 dark:bg-zinc-800 hidden sm:block"></div>

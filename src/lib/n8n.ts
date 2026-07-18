@@ -3,6 +3,7 @@
 // =============================================================================
 
 import { getAuthHeader } from './auth';
+import { supabase } from './supabase';
 
 const FETCH_TIMEOUT_MS = 15000; // 15 seconds
 
@@ -100,32 +101,43 @@ export async function toggleTakeover(
   takeOver: boolean
 ): Promise<{ success: boolean; message: string }> {
   try {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-    const authHeader = await getAuthHeader();
-    if (authHeader) {
-      headers['Authorization'] = authHeader;
+    // Optimistic UI Update
+    const { error: dbError } = await supabase
+      .from('leads')
+      .update({ handoff_required: takeOver })
+      .eq('id', leadId);
+      
+    if (dbError) {
+      console.error('Supabase optimistic update error:', dbError);
     }
 
-    const response = await fetchWithTimeout('/api/whatsapp/takeover', {
+    const webhookUrl = process.env.NEXT_PUBLIC_N8N_WEBHOOK_TAKEOVER;
+    if (!webhookUrl) {
+      throw new Error('N8N Takeover webhook URL is not configured in .env.local');
+    }
+
+    const response = await fetchWithTimeout(webhookUrl, {
       method: 'POST',
-      headers,
-      body: JSON.stringify({ lead_id: leadId, phone, human_takeover: takeOver }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ lead_id: leadId, phone, action: 'takeover', human_takeover: takeOver }),
     });
 
-    const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.error || `Takeover toggle failed: ${response.statusText}`);
+      // Revert optimistic update
+      await supabase.from('leads').update({ handoff_required: !takeOver }).eq('id', leadId);
+      throw new Error(`Takeover webhook failed: ${response.statusText}`);
     }
 
     return {
       success: true,
-      message: data.message || (takeOver ? 'You\'ve taken over this conversation' : 'Bot resumed for this conversation'),
+      message: takeOver ? "You've taken over this conversation" : "Bot resumed for this conversation",
     };
   } catch (error) {
     console.error('Takeover toggle error:', error);
     if ((error as any).name === 'AbortError') {
+      await supabase.from('leads').update({ handoff_required: !takeOver }).eq('id', leadId);
       return { success: false, message: 'Takeover request timed out' };
     }
     return { success: false, message: error instanceof Error ? error.message : 'Toggle failed' };
