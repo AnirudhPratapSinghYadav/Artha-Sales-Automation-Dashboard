@@ -4,7 +4,7 @@ A Next.js (App Router) dashboard that acts as the control center for an AI-drive
 
 ---
 
-## 🏗️ Architecture Overview
+## Architecture Overview
 
 The system is decoupled into three layers:
 
@@ -12,19 +12,49 @@ The system is decoupled into three layers:
 2. **Database (Supabase)**: The single source of truth. It stores `leads`, `conversations`, `appointments`, and `knowledge` documents.
 3. **Automation Engine (n8n)**: Acts as the middleman between the WhatsApp API and Supabase. It processes incoming messages, triggers AI responses, and handles the "human takeover" webhooks.
 
+```mermaid
+graph TD
+    Client[Human Agent / Browser] <--> |UI Interactions & Subscriptions| NextJS[Next.js Dashboard]
+    NextJS <--> |Read/Write Data & Live Sync| Supabase[(Supabase Database)]
+    NextJS --> |Trigger Actions e.g., 'Take Over'| n8n[n8n Automation Engine]
+    n8n <--> |Store Processed Data| Supabase
+    n8n <--> |Send/Receive Messages| WA[WhatsApp API]
+    WA <--> Leads[Customers / Leads]
+
+    style Client fill:#f9f,stroke:#333,stroke-width:2px
+    style Supabase fill:#00C04B,stroke:#333,stroke-width:2px,color:#fff
+    style n8n fill:#FF6D5A,stroke:#333,stroke-width:2px,color:#fff
+```
+
 ### The "Human Takeover" Flow
 
 By default, an AI agent handles the WhatsApp conversations. When the AI fails to answer a question or the lead is ready to buy, a human agent can intervene via the dashboard.
 
-1. Agent clicks "Take Over" in the `/whatsapp` route.
-2. The dashboard hits an n8n webhook (or updates the Supabase record to `handoff_required = true`).
-3. n8n detects the flag and pauses the AI for that specific lead.
-4. The human agent types a message in the dashboard.
-5. The message is pushed to Supabase -> n8n -> WhatsApp API -> Lead.
+```mermaid
+sequenceDiagram
+    participant Lead
+    participant WA as WhatsApp API
+    participant n8n as n8n Engine
+    participant DB as Supabase
+    participant Dash as Artha Dashboard
+
+    Lead->>WA: "I want to talk to a human"
+    WA->>n8n: Webhook triggered
+    n8n->>DB: Logs message to DB
+    DB-->>Dash: Realtime UI update (Agent sees message)
+    Dash->>Dash: Agent clicks "Take Over"
+    Dash->>n8n: Sends API POST (/api/whatsapp/takeover)
+    n8n->>DB: Updates lead (handoff_required = true)
+    n8n->>WA: Pauses AI bot for this specific number
+    Dash->>DB: Agent types manual message
+    DB->>n8n: Triggers manual send workflow
+    n8n->>WA: Delivers manual message
+    WA->>Lead: Receives message from Human
+```
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 This project follows a strict domain-driven architecture to avoid monolithic "god files" and maintain clean separation of concerns.
 
@@ -42,21 +72,21 @@ src/
 │   ├── mocks/            # Mock data for local development without DB
 │   ├── supabase.ts       # Supabase client initialization
 │   └── n8n.ts            # Webhook interaction logic
-└── middleware.ts         # Edge middleware for rate-limiting and security headers
+└── proxy.ts              # Edge middleware for rate-limiting and security headers
 ```
 
 ---
 
-## 🛡️ Security Posture
+## Security Posture
 
 To protect against basic application-layer threats:
-- **Edge Middleware (`src/middleware.ts`)**: Implements an in-memory sliding-window rate limiter for `/api/*` routes to prevent basic burst abuse.
-- **Strict Headers (`next.config.ts` & `middleware.ts`)**: Enforces `Content-Security-Policy`, `X-Frame-Options` (DENY), `X-Content-Type-Options` (nosniff), and `Strict-Transport-Security`.
+- **Edge Middleware (`src/proxy.ts`)**: Implements an in-memory sliding-window rate limiter for `/api/*` routes to prevent basic burst abuse.
+- **Strict Headers (`next.config.ts` & `src/proxy.ts`)**: Enforces `Content-Security-Policy`, `X-Frame-Options` (DENY), `X-Content-Type-Options` (nosniff), and `Strict-Transport-Security`.
 - *Note: True DDoS mitigation (L3/L4/L7 volumetric attacks) relies on your edge network provider (e.g., Vercel, Cloudflare) rather than Next.js logic.*
 
 ---
 
-## 💻 Local Development
+## Local Development
 
 ### Prerequisites
 - Node.js 18+
