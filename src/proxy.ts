@@ -9,7 +9,7 @@ const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
 const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
 const MAX_REQUESTS_PER_WINDOW = 100;
 
-export function proxy(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
   // 1. Basic Rate Limiting (API Routes only to avoid blocking static assets)
@@ -46,7 +46,7 @@ export function proxy(request: NextRequest) {
   // Basic CSP - can be tightened as needed for production
   response.headers.set(
     'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co;"
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://*.supabase.co; frame-src 'self' https://bookings.cloud.microsoft;"
   );
 
   return response;

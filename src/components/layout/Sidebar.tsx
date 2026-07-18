@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import { useAuth } from '@/lib/auth';
+import { Logo } from '@/components/ui/Logo';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -75,12 +76,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <Hexagon className="w-5 h-5 fill-white/20" />
           </div>
         ) : (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img 
-            src="https://www.thinkartha.com/wp-content/uploads/2026/05/Artha-Solutions-logo.png" 
-            alt="Artha Solutions Logo" 
-            className="h-8 object-contain dark:invert transition-all"
-          />
+          <Logo />
         )}
       </div>
 

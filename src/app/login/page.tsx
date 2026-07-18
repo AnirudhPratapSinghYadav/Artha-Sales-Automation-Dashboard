@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { Card } from '@/components/ui/Card';
+import { Logo } from '@/components/ui/Logo';
 import { Lock } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastProvider';
 
@@ -44,12 +45,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <Card className="shadow-lg !rounded-2xl p-8 border-none">
           <div className="text-center mb-8 flex flex-col items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src="https://www.thinkartha.com/wp-content/uploads/2026/05/Artha-Solutions-logo.png" 
-              alt="Artha Solutions Logo" 
-              className="h-12 object-contain mb-4"
-            />
+            <Logo className="mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 dark:text-zinc-100">Sales Automation Portal</h2>
             <p className="text-gray-500 dark:text-zinc-400 mt-1">Sign in to your account</p>
           </div>

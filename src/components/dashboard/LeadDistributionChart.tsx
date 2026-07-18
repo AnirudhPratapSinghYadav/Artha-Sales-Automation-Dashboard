@@ -33,13 +33,13 @@ export function LeadDistributionChart({ data }: LeadDistributionChartProps) {
     <Card className="h-full flex flex-col">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Lead Distribution</h3>
       
-      <div className="flex-1 min-h-[250px] w-full">
+      <div className="flex-1 min-h-[320px] w-full">
         <ResponsiveContainer width="100%" height="100%" minWidth={1} minHeight={1}>
           <PieChart>
             <Pie
               data={data}
               cx="50%"
-              cy="50%"
+              cy="45%"
               innerRadius={60}
               outerRadius={100}
               paddingAngle={2}
