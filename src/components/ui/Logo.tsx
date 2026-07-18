@@ -6,7 +6,7 @@ export function Logo({ className = '' }: { className?: string }) {
     <img
       src="https://www.thinkartha.com/static/img/artha-logo1.png"
       alt="Artha Solutions Logo"
-      className={`h-8 object-contain dark:invert transition-all ${className}`}
+      className={`h-8 object-contain transition-all ${className}`}
     />
   );
 }
