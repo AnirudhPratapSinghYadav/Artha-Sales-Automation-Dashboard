@@ -85,19 +85,20 @@ export default function AppointmentsPage() {
         <div className="flex items-center gap-4">
           <button 
             onClick={() => setCurrentDate(new Date())}
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-zinc-300 border border-gray-300 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+            className="px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-zinc-300 border border-gray-300 dark:border-zinc-700 rounded-md hover:bg-gray-50 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
+            aria-label="Go to today"
           >
             Today
           </button>
           
           <div className="flex items-center gap-1">
-            <button onClick={prevPeriod} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-400">
+            <button onClick={prevPeriod} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Previous period">
               <ChevronLeft className="w-5 h-5" />
             </button>
             <h3 className="text-lg font-semibold text-gray-900 dark:text-zinc-100 min-w-[150px] text-center">
               {getHeaderTitle()}
             </h3>
-            <button onClick={nextPeriod} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-400">
+            <button onClick={nextPeriod} className="p-1 rounded hover:bg-gray-100 dark:hover:bg-zinc-800 text-gray-600 dark:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Next period">
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>
