@@ -6,7 +6,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { User, UserRole, PermissionModule, PermissionAction, RolePermissions } from './types';
-import { mockUsers, mockRolePermissions } from './mock-data';
+import { mockUsers, mockRolePermissions } from './mocks';
 import { supabase } from './supabase';
 
 // ---------------------------------------------------------------------------

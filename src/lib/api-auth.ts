@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { mockUsers, mockRolePermissions } from './mock-data';
+import { mockUsers, mockRolePermissions } from './mocks';
 import { User, PermissionModule, PermissionAction } from './types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
