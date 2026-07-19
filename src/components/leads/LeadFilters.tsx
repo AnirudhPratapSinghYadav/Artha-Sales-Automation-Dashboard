@@ -20,7 +20,8 @@ export function LeadFilters({ activeTier, onTierChange, activePeriod, onPeriodCh
     'Qualified', 
     'Engaged', 
     'Exploring', 
-    'Dormant'
+    'Dormant',
+    'New/Engaging'
   ];
 
   const getTierPillStyle = (tier: ScoreTier | 'ALL', isActive: boolean) => {
@@ -33,6 +34,7 @@ export function LeadFilters({ activeTier, onTierChange, activePeriod, onPeriodCh
       case 'Engaged': return 'bg-amber-500 text-white';
       case 'Exploring': return 'bg-blue-500 text-white';
       case 'Dormant': return 'bg-gray-400 dark:bg-zinc-600 text-white';
+      case 'New/Engaging': return 'bg-purple-500 text-white';
       default: return 'bg-gray-800 dark:bg-zinc-200 text-white dark:text-zinc-900';
     }
   };

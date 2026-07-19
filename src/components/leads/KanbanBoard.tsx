@@ -17,6 +17,7 @@ interface KanbanBoardProps {
 }
 
 const COLUMNS: { id: ScoreTier, title: string }[] = [
+  { id: 'New/Engaging', title: 'New/Engaging' },
   { id: 'Dormant', title: 'Dormant' },
   { id: 'Exploring', title: 'Exploring' },
   { id: 'Engaged', title: 'Engaged' },
@@ -31,6 +32,7 @@ export function KanbanBoard({ leads, onLeadMove, onLeadClick }: KanbanBoardProps
   useEffect(() => {
     // Group leads by tier
     const grouped: Record<string, Lead[]> = {
+      'New/Engaging': [],
       'Dormant': [],
       'Exploring': [],
       'Engaged': [],

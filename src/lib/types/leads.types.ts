@@ -42,7 +42,7 @@ export type LeadStage =
   | 'DNC';
 
 
-export type ScoreTier = 'Dormant' | 'Exploring' | 'Engaged' | 'Qualified' | 'Sales Ready';
+export type ScoreTier = 'New/Engaging' | 'Dormant' | 'Exploring' | 'Engaged' | 'Qualified' | 'Sales Ready';
 
 export interface LeadFilters {
   stage?: LeadStage | 'ALL';

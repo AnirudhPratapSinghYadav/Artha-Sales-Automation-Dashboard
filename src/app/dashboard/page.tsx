@@ -22,7 +22,8 @@ import {
   getLeadTrend, 
   getLeadDistributionData, 
   getActivityFeed,
-  subscribeToAlerts
+  subscribeToAlerts,
+  subscribeToConversations
 } from '@/lib/data';
 import { DashboardKPIs, TrendDataPoint, LeadDistribution, ActivityEvent } from '@/lib/types';
 import { useToast } from '@/components/ui/ToastProvider';
