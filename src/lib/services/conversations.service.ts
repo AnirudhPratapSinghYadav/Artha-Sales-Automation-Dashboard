@@ -8,7 +8,7 @@ export async function getConversations(leadId?: string): Promise<Conversation[]>
   }
   const { data, error } = await query;
   if (error) {
-    console.error('getConversations error:', error);
+    console.warn('getConversations error:', error);
     return [];
   }
   return data || [];

@@ -16,7 +16,7 @@ export const supabase = (() => {
   try {
     return createClient(supabaseUrl, supabaseAnonKey);
   } catch (e) {
-    console.error('Failed to initialize Supabase client:', e);
+    console.warn('Failed to initialize Supabase client:', e);
     // Return a dummy client that doesn't crash the app but fails gracefully on fetches
     return createClient('https://placeholder.supabase.co', 'placeholder-anon-key');
   }
