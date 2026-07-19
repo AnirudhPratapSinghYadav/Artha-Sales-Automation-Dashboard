@@ -20,9 +20,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated && pathname !== '/login') {
-      router.push('/login');
-    }
+    // if (!isLoading && !isAuthenticated && pathname !== '/login') {
+    //   router.push('/login');
+    // }
   }, [isLoading, isAuthenticated, pathname, router]);
 
   // Handle responsive sidebar collapse

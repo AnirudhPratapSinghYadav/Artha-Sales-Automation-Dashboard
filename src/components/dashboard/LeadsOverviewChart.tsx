@@ -14,6 +14,12 @@ interface LeadsOverviewChartProps {
 }
 
 export function LeadsOverviewChart({ data, period, currentCount, percentageChange }: LeadsOverviewChartProps) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const formattedData = data.map(d => {
     const parsed = safeParseISO(d.date);
     return {
@@ -23,6 +29,14 @@ export function LeadsOverviewChart({ data, period, currentCount, percentageChang
   });
 
   const isPositive = percentageChange >= 0;
+
+  if (!mounted) {
+    return (
+      <Card className="h-full flex items-center justify-center">
+        <div className="h-64 flex items-center justify-center text-sm text-gray-500">Loading chart...</div>
+      </Card>
+    );
+  }
 
   if (!data || data.length === 0) {
     return (

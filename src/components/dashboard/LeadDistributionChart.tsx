@@ -29,6 +29,20 @@ export function LeadDistributionChart({ data }: LeadDistributionChartProps) {
     );
   };
 
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Card className="h-full flex items-center justify-center">
+        <div className="h-[300px] flex items-center justify-center text-sm text-gray-500">Loading chart...</div>
+      </Card>
+    );
+  }
+
   if (!data || data.length === 0 || data.every(d => d.count === 0)) {
     return (
       <Card className="h-full flex items-center justify-center">
