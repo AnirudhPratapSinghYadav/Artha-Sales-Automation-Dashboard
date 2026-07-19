@@ -124,8 +124,8 @@ export function LeadDetail({ lead }: LeadDetailProps) {
               ) : conversations.length === 0 ? (
                 <p className="text-center text-sm text-gray-500 my-8">No conversation history yet.</p>
               ) : (
-                conversations.map(conv => (
-                  <div key={conv.id} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
+                conversations.map((conv, idx) => (
+                  <div key={conv.phone + idx} className="border border-gray-100 rounded-lg p-4 bg-gray-50">
                     <div className="flex justify-between items-center mb-2">
                       <Badge variant="active" className="text-xs bg-gray-200 text-gray-700">Stage: {conv.stage}</Badge>
                       <span className="text-xs text-gray-500">

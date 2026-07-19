@@ -71,7 +71,7 @@ export function KanbanBoard({ leads, onLeadMove, onLeadClick }: KanbanBoardProps
       sourceList.splice(destination.index, 0, movedLead);
       newBoard[sourceTier] = sourceList;
     } else {
-      const updatedLead = { ...movedLead, signals: { ...movedLead.signals, tier: destTier } };
+      const updatedLead = { ...movedLead, lead_score_band: destTier };
       destList.splice(destination.index, 0, updatedLead);
       newBoard[sourceTier] = sourceList;
       newBoard[destTier] = destList;

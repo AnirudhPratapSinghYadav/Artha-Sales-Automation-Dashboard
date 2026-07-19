@@ -95,7 +95,7 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
           </Badge>
           
           <button 
-            onClick={() => toast({ title: 'Human takeover — coming soon', variant: 'default' })}
+            onClick={() => toast({ title: 'Human takeover — coming soon', message: 'Takeover functionality is coming soon.' })}
             className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border shadow-sm flex items-center gap-2 bg-gray-100 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700"
             title="Takeover functionality is coming soon"
           >
@@ -123,16 +123,20 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
           </div>
         ) : (
           messages.map((msg, idx) => {
+            const currentParsed = safeParseISO(msg.timestamp);
+            const prevParsed = idx > 0 ? safeParseISO(messages[idx-1].timestamp) : null;
+            const currentFormatted = currentParsed ? format(currentParsed, 'yyyy-MM-dd') : 'Unknown';
+            const prevFormatted = prevParsed ? format(prevParsed, 'yyyy-MM-dd') : 'Unknown';
+            
             // Show date separator if date changed
-            const showDate = idx === 0 || 
-              (safeParseISO(msg.timestamp) ? format(safeParseISO(msg.timestamp), 'yyyy-MM-dd') : 'Unknown') !== (safeParseISO(messages[idx-1].timestamp) ? format(safeParseISO(messages[idx-1].timestamp), 'yyyy-MM-dd') : 'Unknown');
+            const showDate = idx === 0 || currentFormatted !== prevFormatted;
             
             return (
               <React.Fragment key={idx}>
                 {showDate && (
                   <div className="flex justify-center my-4">
                     <span className="bg-white/80 dark:bg-zinc-800/80 backdrop-blur shadow-sm px-3 py-1 rounded-full text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wide">
-                      {(safeParseISO(msg.timestamp) ? format(safeParseISO(msg.timestamp), 'MMM d, yyyy') : 'Unknown')}
+                      {currentParsed ? format(currentParsed, 'MMM d, yyyy') : 'Unknown'}
                     </span>
                   </div>
                 )}

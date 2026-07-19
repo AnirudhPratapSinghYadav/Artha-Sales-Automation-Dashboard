@@ -20,13 +20,14 @@ const dummyAdmin: User = {
 
 const dummyPermissions: RolePermissions = {
   role: 'admin',
+  label: 'Admin',
   permissions: [
     { module: 'leads', actions: ['view', 'edit', 'delete'] },
-    { module: 'conversations', actions: ['view', 'edit', 'delete'] },
+    { module: 'whatsapp', actions: ['view', 'edit', 'delete'] },
     { module: 'appointments', actions: ['view', 'edit', 'delete'] },
     { module: 'settings', actions: ['view', 'edit', 'delete'] },
     { module: 'users', actions: ['view', 'edit', 'delete'] },
-    { module: 'knowledge', actions: ['view', 'edit', 'delete'] },
+    { module: 'knowledge_base', actions: ['view', 'edit', 'delete', 'upload', 'manage'] },
   ]
 };
 

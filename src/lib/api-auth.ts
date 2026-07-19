@@ -10,21 +10,23 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const dummyAdmin: User = {
   id: 'dummy-admin-id',
   email: 'admin@thinkartha.com',
-  first_name: 'Admin',
-  last_name: 'User',
+  name: 'Admin User',
   role: 'admin',
-  status: 'active'
+  status: 'active',
+  last_login: new Date().toISOString(),
+  created_at: new Date().toISOString()
 };
 
 const dummyPermissions: RolePermissions = {
   role: 'admin',
+  label: 'Admin',
   permissions: [
     { module: 'leads', actions: ['view', 'edit', 'delete'] },
-    { module: 'conversations', actions: ['view', 'edit', 'delete'] },
+    { module: 'whatsapp', actions: ['view', 'edit', 'delete'] },
     { module: 'appointments', actions: ['view', 'edit', 'delete'] },
     { module: 'settings', actions: ['view', 'edit', 'delete'] },
     { module: 'users', actions: ['view', 'edit', 'delete'] },
-    { module: 'knowledge', actions: ['view', 'edit', 'delete'] },
+    { module: 'knowledge_base', actions: ['view', 'edit', 'delete', 'upload', 'manage'] },
   ]
 };
 

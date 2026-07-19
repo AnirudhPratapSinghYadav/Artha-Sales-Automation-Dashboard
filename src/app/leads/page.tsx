@@ -91,7 +91,7 @@ export default function LeadsPage() {
   };
 
   const handleLeadMove = (leadId: string, newTier: ScoreTier) => {
-    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, signals: { ...l.signals, tier: newTier } } : l));
+    setLeads(prev => prev.map(l => l.id === leadId ? { ...l, lead_score_band: newTier } : l));
   };
 
   return (
