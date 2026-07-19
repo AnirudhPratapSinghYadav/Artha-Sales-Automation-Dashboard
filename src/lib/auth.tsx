@@ -11,10 +11,11 @@ import { supabase } from './supabase';
 const dummyAdmin: User = {
   id: 'dummy-admin-id',
   email: 'admin@thinkartha.com',
-  first_name: 'Admin',
-  last_name: 'User',
+  name: 'Admin User',
   role: 'admin',
-  status: 'active'
+  status: 'active',
+  last_login: new Date().toISOString(),
+  created_at: new Date().toISOString(),
 };
 
 const dummyPermissions: RolePermissions = {
@@ -65,10 +66,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const stored = localStorage.getItem('artha_user');
       if (stored) {
         try {
-          setUser(JSON.parse(stored));
+          const parsed = JSON.parse(stored);
+          if (!parsed.name) {
+             throw new Error('Invalid user object');
+          }
+          setUser(parsed);
         } catch {
           localStorage.removeItem('artha_user');
           localStorage.removeItem('artha_user_id');
+          setUser(dummyAdmin);
         }
       } else {
         setUser(dummyAdmin);

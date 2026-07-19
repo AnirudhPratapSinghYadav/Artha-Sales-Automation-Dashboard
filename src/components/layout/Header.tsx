@@ -66,10 +66,10 @@ export function Header({ title, onToggleSidebar }: HeaderProps) {
               className="flex items-center gap-3 focus:outline-none"
             >
               <div className="w-8 h-8 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-950 dark:text-primary-300 flex items-center justify-center font-bold text-sm">
-                {user.name.charAt(0)}
+                {user.name?.charAt(0) || user.email?.charAt(0) || 'U'}
               </div>
               <div className="hidden md:flex flex-col items-start">
-                <span className="text-sm font-medium text-gray-900 dark:text-zinc-100">{user.name}</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-zinc-100">{user.name || 'User'}</span>
                 <span className="text-xs text-gray-500 dark:text-zinc-400">{getRoleLabel(user.role)}</span>
               </div>
               <ChevronDown className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
