@@ -3,8 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import { Users, UserPlus, CheckCircle2, ShieldCheck, Calendar, MessageSquare } from 'lucide-react';
 import { KPICard } from '@/components/dashboard/KPICard';
-import { LeadsOverviewChart } from '@/components/dashboard/LeadsOverviewChart';
-import { LeadDistributionChart } from '@/components/dashboard/LeadDistributionChart';
+import dynamic from 'next/dynamic';
+
+const LeadsOverviewChart = dynamic(
+  () => import('@/components/dashboard/LeadsOverviewChart').then((mod) => mod.LeadsOverviewChart),
+  { ssr: false, loading: () => <div className="h-64 flex items-center justify-center text-sm text-gray-500">Loading chart...</div> }
+);
+
+const LeadDistributionChart = dynamic(
+  () => import('@/components/dashboard/LeadDistributionChart').then((mod) => mod.LeadDistributionChart),
+  { ssr: false, loading: () => <div className="h-64 flex items-center justify-center text-sm text-gray-500">Loading chart...</div> }
+);
+
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { CardSkeleton } from '@/components/ui/Skeletons';
 import { 
