@@ -1,20 +1,7 @@
 import { supabase } from '../supabase';
 import { Lead, LeadFilters, ScoreTier } from '../types';
 
-export function mapSupabaseLeadToUI(row: any): Lead {
-  return {
-    ...row,
-    signals: {
-      intent_score: row.intent_score || 0,
-      fit_score: row.fit_score || 0,
-      momentum_score: row.momentum_score || 0,
-      buying_readiness: row.buying_readiness_score || 0,
-      overall_score: row.lead_score_total || 0,
-      tier: row.lead_score_band || getLeadTier(row.lead_score_total || 0),
-      detected_signals: row.signals && Array.isArray(row.signals) ? row.signals : []
-    }
-  } as Lead;
-}
+
 
 export async function getLeads(filters?: LeadFilters): Promise<Lead[]> {
   let query = supabase.from('leads').select('*');
@@ -41,13 +28,13 @@ export async function getLeads(filters?: LeadFilters): Promise<Lead[]> {
     return [];
   }
 
-  return (data || []).map(mapSupabaseLeadToUI);
+  return (data || []) as Lead[];
 }
 
 export async function getLead(id: string): Promise<Lead | null> {
   const { data, error } = await supabase.from('leads').select('*').eq('id', id).single();
   if (error || !data) return null;
-  return mapSupabaseLeadToUI(data);
+  return (data as Lead) || null;
 }
 
 export function getLeadTier(overallScore: number): ScoreTier {

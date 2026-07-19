@@ -9,7 +9,7 @@ import clsx from 'clsx';
 interface ChatListProps {
   conversations: Conversation[];
   selectedId: string | null;
-  onSelect: (id: string) => void;
+  onSelect: (phone: string) => void;
   leads: Lead[];
 }
 
@@ -37,12 +37,12 @@ export function ChatList({ conversations, selectedId, onSelect, leads }: ChatLis
             const lead = leads.find(l => l.id === conv.lead_id);
             const leadName = lead ? `${lead.first_name} ${lead.last_name}` : conv.phone;
             const initial = lead ? lead.first_name.charAt(0) : '?';
-            const isSelected = selectedId === conv.id;
+            const isSelected = selectedId === conv.phone;
             
             return (
               <div 
-                key={conv.id}
-                onClick={() => onSelect(conv.id)}
+                key={conv.phone}
+                onClick={() => onSelect(conv.phone)}
                 className={clsx(
                   "flex items-center gap-3 p-3 cursor-pointer border-b border-gray-50 transition-colors hover:bg-gray-50",
                   isSelected && "bg-primary-50 hover:bg-primary-50"

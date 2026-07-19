@@ -8,7 +8,7 @@ export interface Lead {
   country: string;
   phone: string;
   email: string;
-  score: 'Hot' | 'Warm' | 'Cold';
+  score: string;
   stage: LeadStage;
   opening_line: string;
   pain_point: string;
@@ -17,40 +17,30 @@ export interface Lead {
   brief: string;
   last_contacted: string;
   last_reply_at: string;
-  signals: LeadSignals;
+  signals: string;
   next_action: string;
   handoff_required: boolean;
   handoff_reason: string;
+  followup_count: number;
+  intent_score: number;
+  fit_score: number;
+  momentum_score: number;
+  buying_readiness_score: number;
+  lead_score_total: number;
+  lead_score_band: string;
   created_at: string;
   updated_at: string;
 }
 
 export type LeadStage =
-  | 'NEW'
   | 'CONTACTED'
   | 'CURIOUS'
   | 'ENGAGED'
   | 'QUALIFIED'
   | 'MEETING_BOOKED'
   | 'CLOSED'
-  | 'DNC'
-  | 'COLD_LOGGED';
+  | 'DNC';
 
-export interface LeadSignals {
-  intent_score: number;
-  fit_score: number;
-  momentum_score: number;
-  buying_readiness: number;
-  overall_score: number;
-  tier: ScoreTier;
-  detected_signals: DetectedSignal[];
-}
-
-export interface DetectedSignal {
-  signal: string;
-  points: number;
-  category: 'intent' | 'fit' | 'momentum' | 'buying_readiness';
-}
 
 export type ScoreTier = 'Dormant' | 'Exploring' | 'Engaged' | 'Qualified' | 'Sales Ready';
 

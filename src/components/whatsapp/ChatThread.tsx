@@ -25,15 +25,15 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
     async function loadMsgs() {
       if (!conversation) return;
       setLoading(true);
-      const msgs = await getMessages(conversation.id);
+      const msgs = await getMessages(conversation.phone);
       setMessages(msgs);
       setLoading(false);
     }
     loadMsgs();
 
     if (conversation) {
-      const channel = subscribeToConversations(conversation.lead_id, async () => {
-        const msgs = await getMessages(conversation.id);
+      const channel = subscribeToConversations(conversation.phone, async () => {
+        const msgs = await getMessages(conversation.phone);
         setMessages(msgs);
       });
       return () => {
@@ -94,11 +94,11 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
           </Badge>
           
           <button 
-            disabled={true}
-            className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border shadow-sm flex items-center gap-2 bg-gray-100 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-400 dark:text-zinc-500 cursor-not-allowed"
-            title="Takeover functionality is disabled until n8n webhook is configured"
+            onClick={() => toast({ title: 'Human takeover — coming soon', variant: 'default' })}
+            className="px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border shadow-sm flex items-center gap-2 bg-gray-100 dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700"
+            title="Takeover functionality is coming soon"
           >
-            <ShieldAlert className="w-4 h-4" /> Take Over (Disabled)
+            <ShieldAlert className="w-4 h-4" /> Take Over
           </button>
           
           <div className="w-px h-6 bg-gray-200 dark:bg-zinc-800 hidden sm:block"></div>

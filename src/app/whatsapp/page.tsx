@@ -33,7 +33,7 @@ export default function WhatsAppPage() {
     loadData();
   }, [toast]);
 
-  const selectedConv = conversations.find(c => c.id === selectedId) || null;
+  const selectedConv = conversations.find(c => c.phone === selectedId) || null;
   const selectedLead = selectedConv ? leads.find(l => l.id === selectedConv.lead_id) || null : null;
 
   if (loading) {

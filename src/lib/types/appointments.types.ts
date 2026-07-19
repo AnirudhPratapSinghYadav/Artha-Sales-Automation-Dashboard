@@ -1,3 +1,4 @@
+// NOTE: no backing table exists yet for this type as of [today's date]. Do not wire to Supabase until a table is created and confirmed.
 export interface Appointment {
   id: string;
   lead_id: string;

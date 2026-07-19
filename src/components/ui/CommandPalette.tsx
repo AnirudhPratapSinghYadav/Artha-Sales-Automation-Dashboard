@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Command } from 'cmdk';
 import { useRouter } from 'next/navigation';
-import { Lead, Appointment } from '@/lib/types';
-import { getLeads, getAppointments } from '@/lib/data';
+import { Lead } from '@/lib/types';
+import { getLeads } from '@/lib/data';
 import { Search, LayoutDashboard, Users, Calendar, MessageSquare, FolderOpen, User as UserIcon, Shield } from 'lucide-react';
 
 export function CommandPalette() {
@@ -12,7 +12,7 @@ export function CommandPalette() {
   const router = useRouter();
   
   const [leads, setLeads] = useState<Lead[]>([]);
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
 
   useEffect(() => {
     // Toggle on Cmd+K or Ctrl+K
@@ -30,7 +30,6 @@ export function CommandPalette() {
   useEffect(() => {
     if (open) {
       getLeads().then(setLeads);
-      getAppointments().then(setAppointments);
     }
   }, [open]);
 
@@ -69,12 +68,7 @@ export function CommandPalette() {
               >
                 <Users className="w-4 h-4" /> All Leads
               </Command.Item>
-              <Command.Item 
-                onSelect={() => { router.push('/appointments'); setOpen(false); }}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-900 dark:text-zinc-355 rounded-lg aria-selected:bg-primary-50 dark:aria-selected:bg-primary-950/30 aria-selected:text-primary-700 dark:aria-selected:text-primary-300 cursor-pointer transition-colors"
-              >
-                <Calendar className="w-4 h-4" /> Appointments
-              </Command.Item>
+
               <Command.Item 
                 onSelect={() => { router.push('/whatsapp'); setOpen(false); }}
                 className="flex items-center gap-3 px-3 py-2 text-sm text-gray-900 dark:text-zinc-355 rounded-lg aria-selected:bg-primary-50 dark:aria-selected:bg-primary-950/30 aria-selected:text-primary-700 dark:aria-selected:text-primary-300 cursor-pointer transition-colors"
@@ -117,21 +111,7 @@ export function CommandPalette() {
               ))}
             </Command.Group>
 
-            <Command.Group heading="Appointments" className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-2 px-2 pt-2 border-t border-gray-100 dark:border-zinc-800 mt-2">
-              {appointments.slice(0, 5).map(app => (
-                <Command.Item 
-                  key={app.id}
-                  onSelect={() => { router.push('/appointments'); setOpen(false); }}
-                  className="flex items-center gap-3 px-3 py-2 text-sm text-gray-900 dark:text-zinc-350 rounded-lg aria-selected:bg-primary-50 dark:aria-selected:bg-primary-950/30 aria-selected:text-primary-700 dark:aria-selected:text-primary-300 cursor-pointer transition-colors"
-                >
-                  <Calendar className="w-4 h-4 text-gray-400 dark:text-zinc-500" />
-                  <div className="flex flex-col">
-                    <span>{app.lead_name}</span>
-                    <span className="text-xs text-gray-400 dark:text-zinc-500">{app.date} at {app.time}</span>
-                  </div>
-                </Command.Item>
-              ))}
-            </Command.Group>
+
           </Command.List>
         </Command>
       </div>

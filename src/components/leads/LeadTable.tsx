@@ -37,7 +37,7 @@ export function LeadTable({ leads }: LeadTableProps) {
     } else if (sortField === 'company') {
       comparison = a.company.localeCompare(b.company);
     } else if (sortField === 'overall_score') {
-      comparison = a.signals.overall_score - b.signals.overall_score;
+      comparison = a.lead_score_total - b.lead_score_total;
     } else if (sortField === 'last_contacted') {
       // Handle nulls
       if (!a.last_contacted && !b.last_contacted) comparison = 0;
@@ -127,8 +127,8 @@ export function LeadTable({ leads }: LeadTableProps) {
                         <div className="text-gray-500 dark:text-zinc-400 text-xs">+{lead.phone}</div>
                       </td>
                       <td className="py-4 px-4">
-                        <span className={clsx("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold", getTierColor(lead.signals.tier))}>
-                          {lead.signals.overall_score} - {lead.signals.tier}
+                        <span className={clsx("inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold", getTierColor(lead.lead_score_band as any))}>
+                          {lead.lead_score_total} - {lead.lead_score_band}
                         </span>
                       </td>
                       <td className="py-4 px-4 text-sm text-gray-700 dark:text-zinc-300 capitalize">

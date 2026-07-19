@@ -45,7 +45,6 @@ export function Sidebar({ collapsed }: SidebarProps) {
       label: 'Engagement',
       items: [
         { name: 'WhatsApp Conversations', href: '/whatsapp', icon: MessageSquare },
-        { name: 'Appointments / Meetings', href: '/appointments', icon: Calendar },
       ],
     },
     {

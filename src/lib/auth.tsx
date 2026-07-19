@@ -6,8 +6,28 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { User, UserRole, PermissionModule, PermissionAction, RolePermissions } from './types';
-import { mockUsers, mockRolePermissions } from './mocks';
 import { supabase } from './supabase';
+
+const dummyAdmin: User = {
+  id: 'dummy-admin-id',
+  email: 'admin@thinkartha.com',
+  first_name: 'Admin',
+  last_name: 'User',
+  role: 'admin',
+  status: 'active'
+};
+
+const dummyPermissions: RolePermissions = {
+  role: 'admin',
+  permissions: [
+    { module: 'leads', actions: ['view', 'edit', 'delete'] },
+    { module: 'conversations', actions: ['view', 'edit', 'delete'] },
+    { module: 'appointments', actions: ['view', 'edit', 'delete'] },
+    { module: 'settings', actions: ['view', 'edit', 'delete'] },
+    { module: 'users', actions: ['view', 'edit', 'delete'] },
+    { module: 'knowledge', actions: ['view', 'edit', 'delete'] },
+  ]
+};
 
 // ---------------------------------------------------------------------------
 // Auth Context Types
@@ -28,15 +48,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Role Permission Lookup
 // ---------------------------------------------------------------------------
 function getRolePermissions(role: UserRole): RolePermissions | undefined {
-  return mockRolePermissions.find(rp => rp.role === role);
+  return role === 'admin' ? dummyPermissions : undefined;
 }
 
 // ---------------------------------------------------------------------------
 // Auth Provider
 // ---------------------------------------------------------------------------
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(dummyAdmin); // default to dummy admin for now since auth is bypassed
+  const [isLoading, setIsLoading] = useState(false);
 
   // Check for existing session on mount and setup Supabase listener
   useEffect(() => {
@@ -50,6 +70,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           localStorage.removeItem('artha_user');
           localStorage.removeItem('artha_user_id');
         }
+      } else {
+        setUser(dummyAdmin);
       }
       setIsLoading(false);
     };
@@ -57,18 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 2. Setup Supabase listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        // Here we would ideally query the actual users table to get the full profile including Role
-        // const { data } = await supabase.from('users').select('*').eq('id', session.user.id).single();
-        // setUser(data);
-        
-        // For now, we simulate matching to our mock db by email
-        const matchedUser = mockUsers.find(u => u.email.toLowerCase() === session.user.email?.toLowerCase());
-        if (matchedUser) {
-          setUser(matchedUser);
-        } else {
-          // Fallback if not found in mock
-          checkFallback();
-        }
+        setUser(dummyAdmin);
       } else {
         setUser(null);
       }
@@ -84,19 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, _password: string): Promise<boolean> => {
-    // Attempt real auth if connected
-    // const { error } = await supabase.auth.signInWithPassword({ email, password: _password });
-    // if (!error) return true;
-
-    // Fallback: match against mock users by email
-    const matchedUser = mockUsers.find(u => u.email.toLowerCase() === email.toLowerCase() && u.status === 'active');
-    if (matchedUser) {
-      setUser(matchedUser);
-      localStorage.setItem('artha_user', JSON.stringify(matchedUser));
-      localStorage.setItem('artha_user_id', matchedUser.id);
-      return true;
-    }
-    return false;
+    setUser(dummyAdmin);
+    localStorage.setItem('artha_user', JSON.stringify(dummyAdmin));
+    localStorage.setItem('artha_user_id', dummyAdmin.id);
+    return true;
   }, []);
 
   const logout = useCallback(async () => {

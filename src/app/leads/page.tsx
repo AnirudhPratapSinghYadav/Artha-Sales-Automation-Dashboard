@@ -46,7 +46,7 @@ export default function LeadsPage() {
   const filteredLeads = useMemo(() => {
     return leads.filter(lead => {
       // Tier filter
-      if (activeTier !== 'ALL' && lead.signals.tier !== activeTier) {
+      if (activeTier !== 'ALL' && lead.lead_score_band !== activeTier) {
         return false;
       }
       
@@ -75,7 +75,7 @@ export default function LeadsPage() {
 
     const csvHeader = 'Name,Company,Email,Phone,Score,Tier,Stage\n';
     const csvContent = filteredLeads.map(l => 
-      `${sanitize(l.first_name + ' ' + l.last_name)},${sanitize(l.company)},${sanitize(l.email)},${sanitize(l.phone)},${l.signals.overall_score},${sanitize(l.signals.tier)},${sanitize(l.stage)}`
+      `${sanitize(l.first_name + ' ' + l.last_name)},${sanitize(l.company)},${sanitize(l.email)},${sanitize(l.phone)},${l.lead_score_total},${sanitize(l.lead_score_band)},${sanitize(l.stage)}`
     ).join('\n');
     
     const blob = new Blob([csvHeader + csvContent], { type: 'text/csv;charset=utf-8;' });

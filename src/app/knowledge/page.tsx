@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth';
-import { getKnowledgeDocuments, getUnansweredQuestions } from '@/lib/data';
-import { KnowledgeDoc, UnansweredQuestion } from '@/lib/types';
+import { getKnowledgeDocuments } from '@/lib/data';
+import { KnowledgeDoc } from '@/lib/types';
 import { UploadZone } from '@/components/knowledge/UploadZone';
 import { DocumentsTable } from '@/components/knowledge/DocumentsTable';
-import { KnowledgeGapDetector } from '@/components/knowledge/KnowledgeGapDetector';
+
 import { TableSkeleton, CardSkeleton } from '@/components/ui/Skeletons';
 import { Database } from 'lucide-react';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -17,19 +17,15 @@ export default function KnowledgeBasePage() {
   const canUpload = canAccessModule('knowledge_base'); // In a real app, check specific 'upload' action
   
   const [documents, setDocuments] = useState<KnowledgeDoc[]>([]);
-  const [questions, setQuestions] = useState<UnansweredQuestion[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
       setLoading(true);
       try {
-        const [docs, gaps] = await Promise.all([
-          getKnowledgeDocuments(),
-          getUnansweredQuestions()
-        ]);
+        const docs = await getKnowledgeDocuments();
         setDocuments(docs);
-        setQuestions(gaps);
       } catch (err) {
         toast({ title: 'Error', message: 'Failed to load knowledge base data', variant: 'error' });
       } finally {
@@ -77,9 +73,7 @@ export default function KnowledgeBasePage() {
 
       <DocumentsTable documents={documents} canDelete={canUpload} />
 
-      <div className="mt-8">
-        <KnowledgeGapDetector questions={questions} />
-      </div>
+
 
       <p className="text-xs text-gray-400 dark:text-zinc-500 text-center mt-8">
         Changes to the knowledge base are live within seconds — no need to restart anything.

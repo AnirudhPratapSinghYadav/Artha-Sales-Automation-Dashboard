@@ -1,33 +1,33 @@
 'use client';
 
 import React from 'react';
-import { LeadSignals } from '@/lib/types';
+import { Lead } from '@/lib/types';
 import { getTierColor } from '@/lib/data';
 import { Badge } from '@/components/ui/Badge';
 import clsx from 'clsx';
 
 interface ScoreBreakdownProps {
-  signals: LeadSignals;
+  lead: Lead;
 }
 
-export function ScoreBreakdown({ signals }: ScoreBreakdownProps) {
+export function ScoreBreakdown({ lead }: ScoreBreakdownProps) {
   const categories = [
-    { label: 'Intent', score: signals.intent_score, max: 25 },
-    { label: 'Fit', score: signals.fit_score, max: 25 },
-    { label: 'Momentum', score: signals.momentum_score, max: 25 },
-    { label: 'Buying Readiness', score: signals.buying_readiness, max: 25 },
+    { label: 'Intent', score: lead.intent_score, max: 25 },
+    { label: 'Fit', score: lead.fit_score, max: 25 },
+    { label: 'Momentum', score: lead.momentum_score, max: 25 },
+    { label: 'Buying Readiness', score: lead.buying_readiness_score, max: 25 },
   ];
 
-  const tierColorClass = getTierColor(signals.tier).split(' ')[0]; // Gets just the bg color
+  const tierColorClass = getTierColor(lead.lead_score_band as any)?.split(' ')[0] || 'bg-gray-400'; // Gets just the bg color
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-semibold text-gray-900">Score Breakdown</h3>
         <div className="flex items-center gap-3">
-          <span className="text-3xl font-bold text-gray-900">{signals.overall_score}</span>
-          <Badge variant={signals.tier.toLowerCase().replace(' ', '-') as any} className="text-sm px-3 py-1">
-            {signals.tier}
+          <span className="text-3xl font-bold text-gray-900">{lead.lead_score_total}</span>
+          <Badge variant={lead.lead_score_band?.toLowerCase().replace(' ', '-') as any} className="text-sm px-3 py-1">
+            {lead.lead_score_band}
           </Badge>
         </div>
       </div>

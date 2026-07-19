@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { Lead, Conversation } from '@/lib/types';
 import { getConversations, getTierColor } from '@/lib/data';
 import { ScoreBreakdown } from './ScoreBreakdown';
-import { WhyThisScore } from './WhyThisScore';
 import { Badge } from '@/components/ui/Badge';
 import { formatDistanceToNow, parseISO, format } from 'date-fns';
 import { Mail, Phone, MapPin, Briefcase, AlertCircle, MessageSquare } from 'lucide-react';
@@ -42,8 +41,8 @@ export function LeadDetail({ lead }: LeadDetailProps) {
                 <h2 className="text-2xl font-bold text-gray-900">{lead.first_name} {lead.last_name}</h2>
                 <p className="text-primary-600 font-medium">{lead.title} at {lead.company}</p>
               </div>
-              <Badge variant={lead.signals.tier.toLowerCase().replace(' ', '-') as any} className="text-sm px-3 py-1">
-                {lead.signals.tier}
+              <Badge variant={lead.lead_score_band?.toLowerCase().replace(' ', '-') as any} className="text-sm px-3 py-1">
+                {lead.lead_score_band}
               </Badge>
             </div>
 
@@ -69,8 +68,7 @@ export function LeadDetail({ lead }: LeadDetailProps) {
             </div>
           </div>
 
-          <ScoreBreakdown signals={lead.signals} />
-          <WhyThisScore signals={lead.signals.detected_signals} />
+          <ScoreBreakdown lead={lead} />
         </div>
 
         {/* RIGHT COLUMN: Actions & History */}

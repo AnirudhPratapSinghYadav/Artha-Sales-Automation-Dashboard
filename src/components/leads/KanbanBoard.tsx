@@ -37,8 +37,8 @@ export function KanbanBoard({ leads, onLeadMove, onLeadClick }: KanbanBoardProps
       'Sales Ready': [],
     };
     leads.forEach(lead => {
-      if (grouped[lead.signals.tier]) {
-        grouped[lead.signals.tier].push(lead);
+      if (grouped[lead.lead_score_band as ScoreTier]) {
+        grouped[lead.lead_score_band as ScoreTier].push(lead);
       }
     });
     setBoardData(grouped);
@@ -143,10 +143,10 @@ export function KanbanBoard({ leads, onLeadMove, onLeadClick }: KanbanBoardProps
                               </h4>
                               <span className={clsx(
                                 "text-xs font-bold px-2 py-0.5 rounded-full flex-shrink-0",
-                                lead.signals.overall_score >= 80 ? "bg-emerald-100 text-emerald-700" :
-                                lead.signals.overall_score >= 50 ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600"
+                                lead.lead_score_total >= 80 ? "bg-emerald-100 text-emerald-700" :
+                                lead.lead_score_total >= 50 ? "bg-amber-100 text-amber-700" : "bg-gray-100 text-gray-600"
                               )}>
-                                {lead.signals.overall_score}
+                                {lead.lead_score_total}
                               </span>
                             </div>
                             <p className="text-xs text-gray-500 truncate mb-3">{lead.company}</p>

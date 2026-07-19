@@ -11,7 +11,8 @@ import {
   getDashboardKPIs, 
   getLeadTrend, 
   getLeadDistributionData, 
-  getActivityFeed 
+  getActivityFeed,
+  subscribeToAlerts
 } from '@/lib/data';
 import { DashboardKPIs, TrendDataPoint, LeadDistribution, ActivityEvent } from '@/lib/types';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -50,7 +51,6 @@ export default function DashboardPage() {
 
     loadData();
 
-    // Set up polling for activity feed (every 30 seconds)
     const intervalId = setInterval(async () => {
       try {
         const newEvents = await getActivityFeed(15);
@@ -60,7 +60,15 @@ export default function DashboardPage() {
       }
     }, 30000);
 
-    return () => clearInterval(intervalId);
+    const channel = subscribeToAlerts(async () => {
+      const newEvents = await getActivityFeed(15);
+      setEvents(newEvents);
+    });
+
+    return () => {
+      clearInterval(intervalId);
+      channel.unsubscribe();
+    };
   }, [period]);
 
   if (loading || !kpis) {

@@ -4,12 +4,7 @@ import { AuthProvider } from '@/lib/auth';
 import { AppShell } from '@/components/layout/AppShell';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 import { ToastProvider } from '@/components/ui/ToastProvider';
-import { Plus_Jakarta_Sans } from 'next/font/google';
 
-const plusJakartaSans = Plus_Jakarta_Sans({ 
-  subsets: ['latin'],
-  variable: '--font-plus-jakarta',
-});
 
 export const metadata = {
   title: {
@@ -26,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${plusJakartaSans.variable} font-sans`}>
+      <body className={`font-sans`}>
         <AuthProvider>
           <ToastProvider>
             <AppShell>
