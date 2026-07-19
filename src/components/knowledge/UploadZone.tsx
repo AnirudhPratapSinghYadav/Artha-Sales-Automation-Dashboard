@@ -43,21 +43,21 @@ export function UploadZone() {
 
   const handleFileSelection = (selectedFile: File) => {
     // Validate file type (MIME type and file extension fallback)
-    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'text/plain'];
+    const validTypes = ['application/pdf', 'text/plain'];
     const fileName = selectedFile.name.toLowerCase();
-    const hasValidExt = fileName.endsWith('.pdf') || fileName.endsWith('.docx') || fileName.endsWith('.txt');
+    const hasValidExt = fileName.endsWith('.pdf') || fileName.endsWith('.txt');
     
     if (!validTypes.includes(selectedFile.type) && !hasValidExt) {
       setStatus('error');
-      setMessage('Invalid file type. Please upload a PDF, DOCX, or TXT file.');
+      setMessage('Invalid file type. Please upload a PDF or TXT file.');
       return;
     }
 
-    // Validate file size (10MB limit)
-    const maxFileSize = 10 * 1024 * 1024;
+    // Validate file size (50MB limit to match backend)
+    const maxFileSize = 50 * 1024 * 1024;
     if (selectedFile.size > maxFileSize) {
       setStatus('error');
-      setMessage('File size exceeds the 10MB limit. Please upload a smaller document.');
+      setMessage('File size exceeds the 50MB limit. Please upload a smaller document.');
       return;
     }
     
@@ -73,15 +73,15 @@ export function UploadZone() {
       const result = await uploadKnowledgeDocument(file, category);
       if (result.success) {
         setStatus('success');
-        setMessage('✅ Added to knowledge base. Maya is now aware of this context.');
+        setMessage(result.message || 'Successfully processed document.');
         setFile(null);
       } else {
         setStatus('error');
-        setMessage(`❌ Failed: ${result.message}`);
+        setMessage(result.message || 'Failed to process document.');
       }
     } catch (err) {
       setStatus('error');
-      setMessage('❌ Failed to upload document.');
+      setMessage(err instanceof Error ? err.message : 'Failed to upload document.');
     }
   };
 
@@ -105,7 +105,7 @@ export function UploadZone() {
           ref={inputRef}
           onChange={handleChange}
           className="hidden" 
-          accept=".pdf,.docx,.txt"
+          accept=".pdf,.txt"
         />
         
         <div className="flex flex-col items-center justify-center space-y-3 cursor-pointer">
@@ -116,7 +116,7 @@ export function UploadZone() {
           ) : (
             <>
               <p className="text-gray-900 dark:text-zinc-100 font-medium">Drop your document here, or click to browse</p>
-              <p className="text-sm text-gray-500 dark:text-zinc-400">Accepts PDF, DOCX, TXT</p>
+              <p className="text-sm text-gray-500 dark:text-zinc-400">Accepts PDF and TXT only</p>
             </>
           )}
         </div>

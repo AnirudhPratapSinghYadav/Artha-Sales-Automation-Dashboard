@@ -34,13 +34,11 @@ export async function POST(req: NextRequest) {
     // 4. Validate file type and size (Strict constraints)
     const allowedTypes = [
       'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
       'text/plain',
-      'text/markdown'
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json({ success: false, error: 'Validation Error: Invalid file type. Only PDF, DOCX, TXT, and Markdown are allowed.' }, { status: 400 });
+      return NextResponse.json({ success: false, error: 'Validation Error: Invalid file type. Only PDF and TXT are allowed.' }, { status: 400 });
     }
 
     const maxFileSize = 50 * 1024 * 1024; // 50MB
@@ -63,7 +61,6 @@ export async function POST(req: NextRequest) {
 
     // 6. Generate Unique Storage Path
     const rawCategory = category || 'general';
-    // Ensure category is URL-friendly (e.g. "Case Study" -> "case-study")
     let formattedCategory = rawCategory.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
     if (!formattedCategory) formattedCategory = 'general';
 
@@ -77,7 +74,6 @@ export async function POST(req: NextRequest) {
       ext = originalName.substring(lastDotIndex);
     }
 
-    // Clean base name for storage (e.g. "Bank Mandiri" -> "bank_mandiri")
     const cleanBaseName = baseName.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     const timestamp = Date.now();
     const storagePath = `${formattedCategory}/${cleanBaseName}_${timestamp}${ext}`;
@@ -96,19 +92,25 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'Failed to upload document to storage' }, { status: 500 });
     }
 
-    // 8. Insert into Database
+    // 8. Generate a signed URL for the uploaded file (1 hour expiry)
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
+      .from(bucketName)
+      .createSignedUrl(storagePath, 3600);
+      
+    if (signedUrlError || !signedUrlData?.signedUrl) {
+      console.error('Signed URL generation error:', signedUrlError);
+      return NextResponse.json({ success: false, error: 'Failed to generate signed URL for document' }, { status: 500 });
+    }
+    const signedUrl = signedUrlData.signedUrl;
+
+    // 9. Insert into Database using the NEW schema
+    // id, file_name, category, status, error_message, processed_at, created_at
     const { data: dbData, error: dbError } = await supabase
       .from('knowledge_documents')
       .insert({
-        title: originalName,
         file_name: originalName,
-        storage_path: storagePath,
-        bucket_name: bucketName,
-        mime_type: file.type,
-        file_size: file.size,
         category: rawCategory,
-        status: 'uploaded',
-        uploaded_at: new Date().toISOString()
+        status: 'pending'
       })
       .select('id')
       .single();
@@ -122,10 +124,14 @@ export async function POST(req: NextRequest) {
 
     const documentId = dbData.id;
 
-    // 9. Fire-and-forget Webhook
+    // 10. Synchronously POST to the n8n webhook
     const webhookUrl = process.env.N8N_WEBHOOK_URL || process.env.NEXT_PUBLIC_N8N_WEBHOOK_UPLOAD_KB;
-    if (webhookUrl) {
-      fetch(webhookUrl, {
+    if (!webhookUrl) {
+      return NextResponse.json({ success: false, error: 'Webhook URL is not configured.' }, { status: 500 });
+    }
+
+    try {
+      const n8nResponse = await fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -133,21 +139,43 @@ export async function POST(req: NextRequest) {
           bucket: bucketName,
           storagePath: storagePath,
           mimeType: file.type,
-          fileName: originalName
+          fileName: originalName,
+          category: rawCategory,
+          signedUrl: signedUrl
         })
-      }).catch(err => {
-        // We catch and log, but do not fail the request
-        console.error('Failed to trigger webhook asynchronously:', err);
       });
-    }
 
-    // 10. Return strictly required success format
-    return NextResponse.json({
-      success: true,
-      documentId: documentId,
-      storagePath: storagePath,
-      status: 'uploaded'
-    });
+      if (!n8nResponse.ok) {
+        throw new Error(`Webhook responded with status ${n8nResponse.status}`);
+      }
+
+      // 11. Read Webhook Response exactly and return to client
+      const webhookData = await n8nResponse.json();
+      
+      if (webhookData.success) {
+        return NextResponse.json({
+          success: true,
+          message: webhookData.message || 'Processing complete.'
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          error: webhookData.error || webhookData.message || 'Processing failed at webhook.'
+        }, { status: 400 });
+      }
+
+    } catch (err) {
+      console.error('Webhook synchronous fetch failed:', err);
+      // We mark as failed in DB
+      await supabase.from('knowledge_documents')
+        .update({ status: 'failed', error_message: err instanceof Error ? err.message : 'Webhook error' })
+        .eq('id', documentId);
+        
+      return NextResponse.json({ 
+        success: false, 
+        error: `Processing error: ${err instanceof Error ? err.message : 'Unknown webhook error'}` 
+      }, { status: 500 });
+    }
 
   } catch (error) {
     console.error('API KB Upload error:', error);
