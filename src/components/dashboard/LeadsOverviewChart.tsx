@@ -24,6 +24,15 @@ export function LeadsOverviewChart({ data, period, currentCount, percentageChang
 
   const isPositive = percentageChange >= 0;
 
+  if (!data || data.length === 0) {
+    return (
+      <Card className="h-full flex items-center justify-center">
+        <p className="text-gray-500 dark:text-zinc-400">No leads data available for this period.</p>
+      </Card>
+    );
+  }
+
+
   return (
     <Card className="h-full">
       <div className="mb-6">

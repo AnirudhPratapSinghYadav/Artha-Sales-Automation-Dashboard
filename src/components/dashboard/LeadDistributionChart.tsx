@@ -29,6 +29,14 @@ export function LeadDistributionChart({ data }: LeadDistributionChartProps) {
     );
   };
 
+  if (!data || data.length === 0 || data.every(d => d.count === 0)) {
+    return (
+      <Card className="h-full flex items-center justify-center">
+        <p className="text-gray-500 dark:text-zinc-400">No lead distribution data.</p>
+      </Card>
+    );
+  }
+
   return (
     <Card className="h-full flex flex-col">
       <h3 className="text-lg font-medium text-gray-900 dark:text-zinc-100 mb-4">Lead Distribution</h3>
