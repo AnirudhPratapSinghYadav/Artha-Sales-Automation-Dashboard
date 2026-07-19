@@ -42,12 +42,14 @@ export async function getMessages(phone: string): Promise<Message[]> {
 }
 
 export function subscribeToConversations(phone: string | null, callback: (payload: any) => void) {
-  let filter = 'public:conversations';
+  // Use a unique topic name to avoid React 18 StrictMode setup/cleanup race conditions
+  const uniqueSuffix = Math.random().toString(36).substring(7);
+  let topicName = `public:conversations-${uniqueSuffix}`;
   if (phone) {
-    filter = `public:conversations:phone=eq.${phone}`;
+    topicName = `public:conversations:phone=eq.${phone}-${uniqueSuffix}`;
   }
   
-  const channel = supabase.channel(filter);
+  const channel = supabase.channel(topicName);
   
   channel.on(
     'postgres_changes', 

@@ -99,7 +99,8 @@ export async function getActivityFeed(limit: number = 20): Promise<ActivityEvent
 }
 
 export function subscribeToAlerts(callback: (payload: any) => void) {
-  const channel = supabase.channel('public:alerts');
+  const uniqueSuffix = Math.random().toString(36).substring(7);
+  const channel = supabase.channel(`public:alerts-${uniqueSuffix}`);
   
   channel.on('postgres_changes', { event: '*', schema: 'public', table: 'alerts' }, callback).subscribe();
   

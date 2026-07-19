@@ -66,7 +66,8 @@ export function getTierDotColor(tier: ScoreTier): string {
 }
 
 export function subscribeToLeads(callback: (payload: any) => void) {
-  const channel = supabase.channel('public:leads');
+  const uniqueSuffix = Math.random().toString(36).substring(7);
+  const channel = supabase.channel(`public:leads-${uniqueSuffix}`);
   
   channel.on('postgres_changes', { event: '*', schema: 'public', table: 'leads' }, callback).subscribe();
   
