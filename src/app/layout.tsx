@@ -5,6 +5,7 @@ import { AppShell } from '@/components/layout/AppShell';
 import { CommandPalette } from '@/components/ui/CommandPalette';
 import { ToastProvider } from '@/components/ui/ToastProvider';
 
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: {
