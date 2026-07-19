@@ -1,7 +1,8 @@
 import { supabase } from '../supabase';
 import { DashboardKPIs, TrendDataPoint, LeadDistribution, ActivityEvent } from '../types';
 import { getTierColor } from './leads.service';
-
+import { format } from 'date-fns';
+import { safeParseISO } from '../utils';
 export async function getDashboardKPIs(period?: string): Promise<DashboardKPIs> {
   const { data: leads, error } = await supabase.from('leads').select('*');
   if (error || !leads) {
@@ -27,8 +28,9 @@ export async function getLeadTrend(period?: string): Promise<TrendDataPoint[]> {
 
   const counts: Record<string, number> = {};
   leads.forEach(l => {
-    if (!l.created_at) return;
-    const date = new Date(l.created_at).toISOString().split('T')[0];
+    const parsed = safeParseISO(l.created_at);
+    if (!parsed) return;
+    const date = format(parsed, 'yyyy-MM-dd');
     counts[date] = (counts[date] || 0) + 1;
   });
 
