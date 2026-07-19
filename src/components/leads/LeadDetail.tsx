@@ -5,7 +5,8 @@ import { Lead, Conversation } from '@/lib/types';
 import { getConversations, getTierColor } from '@/lib/data';
 import { ScoreBreakdown } from './ScoreBreakdown';
 import { Badge } from '@/components/ui/Badge';
-import { formatDistanceToNow, parseISO, format } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 import { Mail, Phone, MapPin, Briefcase, AlertCircle, MessageSquare } from 'lucide-react';
 import Link from 'next/link';
 
@@ -128,7 +129,7 @@ export function LeadDetail({ lead }: LeadDetailProps) {
                     <div className="flex justify-between items-center mb-2">
                       <Badge variant="active" className="text-xs bg-gray-200 text-gray-700">Stage: {conv.stage}</Badge>
                       <span className="text-xs text-gray-500">
-                        {formatDistanceToNow(parseISO(conv.last_updated), { addSuffix: true })}
+                        {safeFormatDistance(conv.last_updated, { addSuffix: true })}
                       </span>
                     </div>
                     <p className="text-sm text-gray-800 font-medium mb-3">{conv.summary}</p>

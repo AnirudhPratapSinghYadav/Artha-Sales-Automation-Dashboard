@@ -3,7 +3,8 @@
 import React from 'react';
 import { Conversation, Lead } from '@/lib/types';
 import { Search } from 'lucide-react';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { formatDistanceToNow,  } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface ChatListProps {
@@ -56,7 +57,7 @@ export function ChatList({ conversations, selectedId, onSelect, leads }: ChatLis
                   <div className="flex justify-between items-baseline mb-0.5">
                     <h4 className="font-medium text-gray-900 truncate text-sm">{leadName}</h4>
                     <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
-                      {formatDistanceToNow(parseISO(conv.last_updated), { addSuffix: false })}
+                      {safeFormatDistance(conv.last_updated, { addSuffix: true })}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 truncate w-full pr-4">

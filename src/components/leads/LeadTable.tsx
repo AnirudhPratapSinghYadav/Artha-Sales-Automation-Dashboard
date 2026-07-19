@@ -3,7 +3,8 @@
 import React, { useState } from 'react';
 import { Lead } from '@/lib/types';
 import { getTierColor } from '@/lib/data';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { formatDistanceToNow,  } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 import { LeadDetail } from './LeadDetail';
 import clsx from 'clsx';
 import { ChevronDown, ChevronUp, AlertCircle } from 'lucide-react';

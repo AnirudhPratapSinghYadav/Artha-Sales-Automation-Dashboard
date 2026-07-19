@@ -4,7 +4,8 @@ import React from 'react';
 import { UnansweredQuestion } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import { HelpCircle, CheckCircle2 } from 'lucide-react';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { formatDistanceToNow,  } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface KnowledgeGapDetectorProps {
@@ -41,7 +42,7 @@ export function KnowledgeGapDetector({ questions }: KnowledgeGapDetectorProps) {
                     <div>
                       <h4 className="text-sm font-medium text-gray-900 dark:text-zinc-100 leading-tight mb-1">"{q.question}"</h4>
                       <p className="text-xs text-gray-500 dark:text-zinc-400">
-                        Asked by {q.lead_name} • {formatDistanceToNow(parseISO(q.asked_at), { addSuffix: true })}
+                        Asked by {q.lead_name} • {safeFormatDistance(q.asked_at, { addSuffix: true })}
                       </p>
                     </div>
                   </div>

@@ -4,8 +4,8 @@ import React from 'react';
 import { Card } from '@/components/ui/Card';
 import { TrendDataPoint } from '@/lib/types';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { format, parseISO } from 'date-fns';
-
+import { format } from 'date-fns';
+import { safeParseISO } from '@/lib/utils';
 interface LeadsOverviewChartProps {
   data: TrendDataPoint[];
   period: string;
@@ -14,10 +14,13 @@ interface LeadsOverviewChartProps {
 }
 
 export function LeadsOverviewChart({ data, period, currentCount, percentageChange }: LeadsOverviewChartProps) {
-  const formattedData = data.map(d => ({
-    ...d,
-    formattedDate: format(parseISO(d.date), 'MMM d'),
-  }));
+  const formattedData = data.map(d => {
+    const parsed = safeParseISO(d.date);
+    return {
+      ...d,
+      formattedDate: parsed ? format(parsed, 'MMM d') : 'Unknown',
+    };
+  });
 
   const isPositive = percentageChange >= 0;
 

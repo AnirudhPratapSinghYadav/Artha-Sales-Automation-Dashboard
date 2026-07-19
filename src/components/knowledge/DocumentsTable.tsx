@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { KnowledgeDoc } from '@/lib/types';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
+import { safeParseISO } from '@/lib/utils';
 import { Eye, Trash2, FileText, FileSearch, FileBarChart, FileCode2 } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -105,7 +106,7 @@ export function DocumentsTable({ documents, canDelete }: DocumentsTableProps) {
                     <span className="text-sm text-gray-700 dark:text-zinc-300 bg-gray-100 dark:bg-zinc-800 px-2.5 py-1 rounded-md">{doc.industry_tag || 'Any'}</span>
                   </td>
                   <td className="py-4 px-6">
-                    <p className="text-sm text-gray-900 dark:text-zinc-100">{format(parseISO(doc.date_added), 'MMM d, yyyy')}</p>
+                    <p className="text-sm text-gray-900 dark:text-zinc-100">{safeParseISO(doc.date_added) ? format(safeParseISO(doc.date_added)!, 'MMM d, yyyy') : 'Unknown'}</p>
                   </td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex items-center justify-end gap-2">

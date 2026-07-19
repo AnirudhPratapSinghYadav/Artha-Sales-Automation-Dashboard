@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Message } from '@/lib/types';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
+import { safeParseISO } from '@/lib/utils';
 import clsx from 'clsx';
 
 interface MessageBubbleProps {
@@ -12,7 +13,8 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message, leadName }: MessageBubbleProps) {
   const isBot = message.sender === 'bot';
-  const time = format(parseISO(message.timestamp), 'h:mm a');
+  const parsedDate = safeParseISO(message.timestamp);
+  const time = parsedDate ? format(parsedDate, 'h:mm a') : 'Unknown';
   
   return (
     <div className={clsx("flex w-full mb-4", isBot ? "justify-start" : "justify-end")}>

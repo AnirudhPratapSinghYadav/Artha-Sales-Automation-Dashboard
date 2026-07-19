@@ -8,7 +8,8 @@ import { Phone, MoreVertical, ShieldAlert } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { useToast } from '@/components/ui/ToastProvider';
 import clsx from 'clsx';
-import { format, parseISO } from 'date-fns';
+import { format,  } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 
 interface ChatThreadProps {
   conversation: Conversation | null;
@@ -124,14 +125,14 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
           messages.map((msg, idx) => {
             // Show date separator if date changed
             const showDate = idx === 0 || 
-              format(parseISO(msg.timestamp), 'yyyy-MM-dd') !== format(parseISO(messages[idx-1].timestamp), 'yyyy-MM-dd');
+              (safeParseISO(msg.timestamp) ? format(safeParseISO(msg.timestamp), 'yyyy-MM-dd') : 'Unknown') !== (safeParseISO(messages[idx-1].timestamp) ? format(safeParseISO(messages[idx-1].timestamp), 'yyyy-MM-dd') : 'Unknown');
             
             return (
               <React.Fragment key={idx}>
                 {showDate && (
                   <div className="flex justify-center my-4">
                     <span className="bg-white/80 dark:bg-zinc-800/80 backdrop-blur shadow-sm px-3 py-1 rounded-full text-xs font-medium text-gray-500 dark:text-zinc-400 uppercase tracking-wide">
-                      {format(parseISO(msg.timestamp), 'MMM d, yyyy')}
+                      {(safeParseISO(msg.timestamp) ? format(safeParseISO(msg.timestamp), 'MMM d, yyyy') : 'Unknown')}
                     </span>
                   </div>
                 )}

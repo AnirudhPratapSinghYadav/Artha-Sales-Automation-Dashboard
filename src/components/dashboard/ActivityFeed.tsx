@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card } from '@/components/ui/Card';
 import { ActivityEvent } from '@/lib/types';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { safeFormatDistance } from '@/lib/utils';
 
 interface ActivityFeedProps {
   events: ActivityEvent[];
@@ -37,7 +37,7 @@ export function ActivityFeed({ events }: ActivityFeedProps) {
                   {event.message}
                 </p>
                 <p className="text-xs text-gray-500 dark:text-zinc-400 mt-1">
-                  {formatDistanceToNow(parseISO(event.timestamp), { addSuffix: true })}
+                  {safeFormatDistance(event.timestamp, { addSuffix: true })}
                 </p>
               </div>
             </div>

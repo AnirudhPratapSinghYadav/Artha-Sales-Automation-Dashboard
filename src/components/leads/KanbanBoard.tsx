@@ -5,7 +5,8 @@ import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea
 import { Lead, ScoreTier } from '@/lib/types';
 import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
-import { formatDistanceToNow, parseISO } from 'date-fns';
+import { formatDistanceToNow,  } from 'date-fns';
+import { safeParseISO, safeFormatDistance } from '@/lib/utils';
 import { MessageSquare, Calendar } from 'lucide-react';
 import clsx from 'clsx';
 
@@ -152,7 +153,7 @@ export function KanbanBoard({ leads, onLeadMove, onLeadClick }: KanbanBoardProps
                             <p className="text-xs text-gray-500 truncate mb-3">{lead.company}</p>
                             
                             <div className="flex items-center justify-between text-xs text-gray-400 mt-2 pt-2 border-t border-gray-100">
-                              <span>{formatDistanceToNow(parseISO(lead.updated_at))} ago</span>
+                              <span>{safeFormatDistance(lead.updated_at, { addSuffix: true })} ago</span>
                               <div className="flex gap-2">
                                 <MessageSquare className="w-3.5 h-3.5" />
                                 <Calendar className="w-3.5 h-3.5" />
