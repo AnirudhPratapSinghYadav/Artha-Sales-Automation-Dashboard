@@ -150,7 +150,7 @@ export default function DashboardPage() {
           value={kpis.meetings_booked} 
           icon={Calendar} 
           color="bg-blue-100 text-blue-600" 
-          linkHref="/appointments"
+          linkHref="/leads?stage=MEETING_BOOKED"
         />
         <KPICard 
           title="Active Conversations" 

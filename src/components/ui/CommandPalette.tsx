@@ -81,18 +81,6 @@ export function CommandPalette() {
               >
                 <FolderOpen className="w-4 h-4" /> Knowledge Base
               </Command.Item>
-              <Command.Item 
-                onSelect={() => { router.push('/admin/users'); setOpen(false); }}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-900 dark:text-zinc-355 rounded-lg aria-selected:bg-primary-50 dark:aria-selected:bg-primary-950/30 aria-selected:text-primary-700 dark:aria-selected:text-primary-300 cursor-pointer transition-colors"
-              >
-                <UserIcon className="w-4 h-4" /> User Directory
-              </Command.Item>
-              <Command.Item 
-                onSelect={() => { router.push('/admin/roles'); setOpen(false); }}
-                className="flex items-center gap-3 px-3 py-2 text-sm text-gray-900 dark:text-zinc-355 rounded-lg aria-selected:bg-primary-50 dark:aria-selected:bg-primary-950/30 aria-selected:text-primary-700 dark:aria-selected:text-primary-300 cursor-pointer transition-colors"
-              >
-                <Shield className="w-4 h-4" /> Roles & Permissions
-              </Command.Item>
             </Command.Group>
 
             <Command.Group heading="Leads" className="text-xs font-semibold text-gray-500 dark:text-zinc-400 mb-2 px-2 pt-2 border-t border-gray-100 dark:border-zinc-800 mt-2">

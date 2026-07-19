@@ -49,11 +49,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (pathname === '/leads') return 'Leads';
     if (pathname === '/leads/new') return 'New Lead';
     if (pathname === '/whatsapp') return 'WhatsApp Conversations';
-    if (pathname === '/appointments') return 'Appointments';
+
     if (pathname === '/knowledge') return 'Knowledge Base';
-    if (pathname?.startsWith('/admin/users')) return 'User Management';
-    if (pathname?.startsWith('/admin/roles')) return 'Roles & Permissions';
-    if (pathname?.startsWith('/admin/settings')) return 'Settings';
     return '';
   };
 

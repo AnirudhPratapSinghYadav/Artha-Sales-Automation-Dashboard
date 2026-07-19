@@ -55,12 +55,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
     },
   ];
 
-  const adminItems = [
-    { name: 'Users', href: '/admin/users', icon: Users, module: 'users' },
-    { name: 'Roles & Permissions', href: '/admin/roles', icon: Shield, module: 'roles' },
-  ] as const;
 
-  const accessibleAdminItems = adminItems.filter(item => canAccessModule(item.module as any));
 
   return (
     <div
@@ -113,38 +108,6 @@ export function Sidebar({ collapsed }: SidebarProps) {
           </div>
         ))}
 
-        {accessibleAdminItems.length > 0 && (
-          <div>
-            {!collapsed && (
-              <h4 className="px-3 text-xs uppercase tracking-wider text-gray-400 dark:text-zinc-500 font-semibold mb-2">
-                Admin
-              </h4>
-            )}
-            <div className="space-y-1">
-              {accessibleAdminItems.map(item => {
-                const isActive = pathname === item.href;
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={clsx(
-                      'flex items-center px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                      isActive
-                        ? 'bg-primary-50 text-primary-700 dark:bg-primary-950/50 dark:text-primary-300 border-l-4 border-primary-500'
-                        : 'text-gray-600 dark:text-zinc-450 hover:bg-gray-100 dark:hover:bg-zinc-800/50'
-                    )}
-                    title={collapsed ? item.name : undefined}
-                  >
-                    <item.icon
-                      className={clsx('w-5 h-5 flex-shrink-0', isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-zinc-500')}
-                    />
-                    {!collapsed && <span className="ml-3 truncate">{item.name}</span>}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
