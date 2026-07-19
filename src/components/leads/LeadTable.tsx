@@ -44,7 +44,9 @@ export function LeadTable({ leads }: LeadTableProps) {
       if (!a.last_contacted && !b.last_contacted) comparison = 0;
       else if (!a.last_contacted) comparison = -1;
       else if (!b.last_contacted) comparison = 1;
-      else comparison = new Date(a.last_contacted).getTime() - new Date(b.last_contacted).getTime();
+      const dateA = safeParseISO(a.last_contacted)?.getTime() || 0;
+      const dateB = safeParseISO(b.last_contacted)?.getTime() || 0;
+      comparison = dateA - dateB;
     } else {
       comparison = a.id.localeCompare(b.id);
     }
@@ -137,7 +139,7 @@ export function LeadTable({ leads }: LeadTableProps) {
                       </td>
                       <td className="py-4 px-4 text-sm text-gray-500 dark:text-zinc-400">
                         {lead.last_contacted 
-                          ? formatDistanceToNow(new Date(lead.last_contacted), { addSuffix: true }) 
+                          ? safeFormatDistance(lead.last_contacted, { addSuffix: true }) 
                           : 'Never'}
                       </td>
                     </tr>
