@@ -52,7 +52,7 @@ export default function DashboardPage() {
         setDistributionData(dist);
         setEvents(activity);
       } catch (error) {
-        console.warn('Failed to load dashboard data:', error);
+        console.error('Failed to load dashboard data:', error);
         toast({ title: 'Error', message: 'Failed to load dashboard data', variant: 'error' });
       } finally {
         setLoading(false);

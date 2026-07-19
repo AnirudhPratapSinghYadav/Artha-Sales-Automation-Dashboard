@@ -24,7 +24,7 @@ export async function getLeads(filters?: LeadFilters): Promise<Lead[]> {
 
   const { data, error } = await query;
   if (error) {
-    console.warn('Error fetching leads:', error);
+    console.error('Error fetching leads:', error);
     return [];
   }
 
