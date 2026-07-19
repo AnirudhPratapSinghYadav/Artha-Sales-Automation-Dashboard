@@ -62,7 +62,7 @@ export default function DashboardPage() {
     loadData();
 
     // Realtime KPI updates
-    const subscription = subscribeToConversations(null, (payload) => {
+    const unsubscribeConversations = subscribeToConversations(null, (payload) => {
       if (payload.eventType === 'INSERT') {
         setKpis(prev => prev ? { ...prev, active_conversations: prev.active_conversations + 1 } : prev);
       } else if (payload.eventType === 'DELETE') {
@@ -79,15 +79,15 @@ export default function DashboardPage() {
       }
     }, 30000);
 
-    const channel = subscribeToAlerts(async () => {
+    const unsubscribeAlerts = subscribeToAlerts(async () => {
       const newEvents = await getActivityFeed(15);
       setEvents(newEvents);
     });
 
     return () => {
       clearInterval(intervalId);
-      channel.unsubscribe();
-      subscription.unsubscribe();
+      unsubscribeAlerts();
+      unsubscribeConversations();
     };
   }, [period]);
 

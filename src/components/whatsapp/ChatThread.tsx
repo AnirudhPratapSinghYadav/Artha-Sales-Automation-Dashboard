@@ -33,12 +33,12 @@ export function ChatThread({ conversation, lead }: ChatThreadProps) {
     loadMsgs();
 
     if (conversation) {
-      const channel = subscribeToConversations(conversation.phone, async () => {
+      const unsubscribe = subscribeToConversations(conversation.phone, async () => {
         const msgs = await getMessages(conversation.phone);
         setMessages(msgs);
       });
       return () => {
-        channel.unsubscribe();
+        unsubscribe();
       };
     }
   }, [conversation]);

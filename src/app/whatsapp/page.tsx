@@ -49,7 +49,7 @@ export default function WhatsAppPage() {
     });
 
     return () => {
-      subscription.unsubscribe();
+      subscription();
     };
   }, [toast]);
 

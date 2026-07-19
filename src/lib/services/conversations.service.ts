@@ -47,17 +47,20 @@ export function subscribeToConversations(phone: string | null, callback: (payloa
     filter = `public:conversations:phone=eq.${phone}`;
   }
   
-  return supabase
-    .channel(filter)
-    .on(
-      'postgres_changes', 
-      { 
-        event: '*', 
-        schema: 'public', 
-        table: 'conversations',
-        ...(phone ? { filter: `phone=eq.${phone}` } : {}) 
-      }, 
-      callback
-    )
-    .subscribe();
+  const channel = supabase.channel(filter);
+  
+  channel.on(
+    'postgres_changes', 
+    { 
+      event: '*', 
+      schema: 'public', 
+      table: 'conversations',
+      ...(phone ? { filter: `phone=eq.${phone}` } : {}) 
+    }, 
+    callback
+  ).subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
 }
