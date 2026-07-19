@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Conversation, Lead } from '@/lib/types';
-import { getConversations, getLeads } from '@/lib/data';
+import { getConversations, getLeads, subscribeToConversations } from '@/lib/data';
 import { ChatList } from '@/components/whatsapp/ChatList';
 import { ChatThread } from '@/components/whatsapp/ChatThread';
 import { useToast } from '@/components/ui/ToastProvider';
@@ -31,6 +31,26 @@ export default function WhatsAppPage() {
       }
     }
     loadData();
+
+    // Subscribe to realtime updates
+    const subscription = subscribeToConversations(null, (payload) => {
+      // payload.new contains the updated/new conversation row
+      if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
+        setConversations(prev => {
+          const exists = prev.find(c => c.phone === payload.new.phone);
+          if (exists) {
+            return prev.map(c => c.phone === payload.new.phone ? payload.new as Conversation : c);
+          }
+          return [...prev, payload.new as Conversation];
+        });
+      } else if (payload.eventType === 'DELETE') {
+        setConversations(prev => prev.filter(c => c.phone !== payload.old.phone));
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [toast]);
 
   const selectedConv = conversations.find(c => c.phone === selectedId) || null;

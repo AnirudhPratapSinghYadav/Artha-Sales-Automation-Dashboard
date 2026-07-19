@@ -61,6 +61,15 @@ export default function DashboardPage() {
 
     loadData();
 
+    // Realtime KPI updates
+    const subscription = subscribeToConversations(null, (payload) => {
+      if (payload.eventType === 'INSERT') {
+        setKpis(prev => prev ? { ...prev, active_conversations: prev.active_conversations + 1 } : prev);
+      } else if (payload.eventType === 'DELETE') {
+        setKpis(prev => prev ? { ...prev, active_conversations: Math.max(0, prev.active_conversations - 1) } : prev);
+      }
+    });
+
     const intervalId = setInterval(async () => {
       try {
         const newEvents = await getActivityFeed(15);
@@ -78,6 +87,7 @@ export default function DashboardPage() {
     return () => {
       clearInterval(intervalId);
       channel.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [period]);
 
