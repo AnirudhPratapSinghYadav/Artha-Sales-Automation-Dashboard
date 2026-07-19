@@ -23,12 +23,12 @@ export async function getDashboardKPIs(period?: string): Promise<DashboardKPIs> 
 }
 
 export async function getLeadTrend(period?: string): Promise<TrendDataPoint[]> {
-  const { data: leads } = await supabase.from('leads').select('created_at');
+  const { data: leads } = await supabase.from('leads').select('date_added');
   if (!leads) return [];
 
   const counts: Record<string, number> = {};
   leads.forEach(l => {
-    const parsed = safeParseISO(l.created_at);
+    const parsed = safeParseISO(l.date_added);
     if (!parsed) return;
     const date = format(parsed, 'yyyy-MM-dd');
     counts[date] = (counts[date] || 0) + 1;

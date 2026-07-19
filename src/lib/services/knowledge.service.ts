@@ -2,7 +2,7 @@ import { KnowledgeDoc, UnansweredQuestion } from '../types';
 import { supabase } from '../supabase';
 
 export async function getKnowledgeDocuments(): Promise<KnowledgeDoc[]> {
-  const { data, error } = await supabase.from('documents').select('*').order('created_at', { ascending: false });
+  const { data, error } = await supabase.from('knowledge_documents').select('*').order('uploaded_at', { ascending: false });
   if (error || !data) return [];
   
   return data.map((doc: any) => ({
